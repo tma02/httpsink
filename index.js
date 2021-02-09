@@ -3,9 +3,17 @@ const http = require('http');
 const PORT = process.env.PORT || 8080;
 
 const requestListener = function (req, res) {
-  console.log(`${req.method} ${req.url} ${req.body}`);
-  res.writeHead(200);
-  res.end('');
+  let data = '';
+  req.on('data', chunk => {
+    data += chunk;
+  })
+  req.on('end', () => {
+    console.log(`${req.method} ${req.url} ${data}`);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    res.writeHead(200);
+    res.end('');
+  });
 }
 
 const server = http.createServer(requestListener);
